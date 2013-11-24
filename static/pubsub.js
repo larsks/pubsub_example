@@ -47,6 +47,8 @@ function display_message(data) {
  * runaway polling if the server is unavailable/broken/etc.
  */
 function poll() {
+	var poll_interval=0;
+
 	$.ajax({
 		url: poll_url,
 		type: 'GET',
