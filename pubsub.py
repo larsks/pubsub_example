@@ -7,6 +7,8 @@ import sys
 import argparse
 import json
 
+import jinja2
+from jinja2.loaders import FileSystemLoader
 import gevent
 from gevent import queue
 from gevent import monkey; monkey.patch_all()
@@ -21,8 +23,19 @@ static_dir = os.path.join(
         'static',
         )
 
+template_dir = os.path.join(
+        os.environ.get('OPENSHIFT_REPO_DIR', '.'),
+        'templates',
+        )
+
+# Assume we're deployed in OpenShift if we find
+# OPENSHIFT_APP_NAME in the environment.
+using_openshift = 'OPENSHIFT_APP_NAME' in os.environ
+
 ctx = zmq.Context()
 app = bottle.app()
+env = jinja2.Environment(
+        loader = FileSystemLoader(template_dir))
 
 pubsock = ctx.socket(zmq.PUB)
 pubsock.bind('inproc://pub')
@@ -88,5 +101,6 @@ def default(path):
 @app.route('/')
 def index():
     '''Return a default document if no path was specified.'''
-    return bottle.static_file('index.html', static_dir)
+    t = env.get_template('index.html')
+    return t.render(using_openshift=int(using_openshift))
 

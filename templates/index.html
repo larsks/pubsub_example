@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pub/Sub Example</title>
+
+    <!-- 
+    * This variable is by the server code if it detects that
+    * we are deployed in an OpenShift environment.
+    -->
+    <script>var using_openshift = {{using_openshift}};</script>
+
+    <script src="/jquery.js"></script>
+    <script src="/pubsub.js"></script>
+    <link rel="stylesheet" href="/pubsub.css"></link>
+  </head>
+  <body>
+    <form id="chatform">
+      <table>
+        <tr>
+          <td>
+            <label for="nick">Nickname:</label>
+          </td>
+          <td>
+            <input id="nick" size="10" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="message">message:</label>
+          </td>
+          <td>
+            <input id="message" size="40" />
+            <button id="send">Send</button>
+          </td>
+        </tr>
+      </table>
+    </form>
+
+    <hr />
+
+    <!--
+    * This <div> element is used to display messages received from
+    * the server.
+    -->
+    <div id="conversation"></div>
+  </body>
+</html>
+
