@@ -28,6 +28,17 @@ if (using_openshift) {
 	poll_url = "/sub";
 }
 
+/* Append a mesage to the div with id "conversation".
+ */
+function display_message(data) {
+	$("#conversation").append("<p><span class='nick'>"
+				  + (data['nick'] ? data['nick'] : "&lt;unknown&gt;")
+				  + "</span>: " + data['message'] + "</p>");
+				  $("#conversation").each(function () {
+					  this.scrollTop = this.scrollHeight;
+				  });
+}
+
 /* This is our long poll function.  It makes an ajax request
  * to /sub on our server, and then hangs around waiting for data.
  *
@@ -41,16 +52,14 @@ function poll() {
 		type: 'GET',
 		dataType: 'json',
 		success: function(data) {
-			$("#conversation").append("<p><span class='nick'>"
-						  + (data['nick'] ? data['nick'] : "&lt;unknown&gt;")
-						  + "</span>: " + data['message'] + "</p>");
-						  $("#conversation").each(function () {
-							  this.scrollTop = this.scrollHeight;
-						  });
-						  setTimeout(poll, 0);
+			display_message(data);
+			poll_interval=0;
 		},
 		error: function () {
-			setTimeout(poll, 1000);
+			poll_interval=1000;
+		},
+		complete: function () {
+			setTimeout(poll, poll_interval);
 		},
 	});
 }
@@ -83,6 +92,6 @@ $(function() {
 		event.preventDefault();
 	});
 
-	setTimeout(poll, 0);
+	poll();
 })
 
