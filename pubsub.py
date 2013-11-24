@@ -88,6 +88,14 @@ def sub():
     '''This is the endpoint for long poll clients.  It spawns a
     greenlet to service the request and immediately exits.'''
 
+    # Make sure response will have the correct content type.
+    bottle.response.content_type = 'application/json'
+
+    # Allow cross-domain AJAX requests if we're on OpenSfhit
+    # (because polls will come in on an alternate port).
+    if using_openshift:
+        bottle.response.headers['Access-Control-Allow-Origin'] = '*'
+
     q = queue.Queue()
     rfile = bottle.request.environ['wsgi.input'].rfile
     task = gevent.spawn(worker, q, rfile)
