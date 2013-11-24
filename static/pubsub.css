@@ -1,0 +1,14 @@
+html, body {
+	height: 80%;
+}
+
+#conversation {
+	border: thin solid black;
+	padding: 1em;
+	overflow: auto;
+	height: 100%;
+}
+
+.nick {
+	font-weight: bold;
+}

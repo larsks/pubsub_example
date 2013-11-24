@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>            
+		<title>Pub/Sub Example</title>
+
+    <script>
+      var using_openshift = 0;
+    </script>
+    <script src="/jquery.js"></script>
+    <script src="/pubsub.js"></script>
+
+    <link rel="stylesheet" href="/pubsub.css"></link>
+	</head>
+	<body>
+  <form id="chatform">
+  <table>
+    <tr>
+      <td><label for="nick">Nickname:</label></td>
+      <td><input id="nick" size="10"></td>
+    </tr>
+    <tr>
+      <td><label for="message">message:</label></td>
+      <td><input id="message" size="40"><button id="send">Send</button></td>
+    </tr>
+  </table>
+</form>
+
+  <hr/>
+
+  <div id="conversation">
+  </div>
+	</body>
+</html>
+
