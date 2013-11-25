@@ -70,6 +70,13 @@ def subcontext():
 
     subsock.close()
 
+@contextmanager
+def pollcounter():
+    global polling
+    polling += 1
+    yield
+    polling -= 1
+
 def wait_for_message (rfile):
     '''Wait for a message on the message bus and return it to the
     client.'''
@@ -96,11 +103,7 @@ def wait_for_message (rfile):
 def sub():
     '''This is the endpoint for long poll clients.'''
 
-    global polling
-
-    try:
-        polling += 1
-
+    with pollcounter():
         # Make sure response will have the correct content type.
         bottle.response.content_type = 'application/json'
 
@@ -113,8 +116,6 @@ def sub():
         rfile = bottle.request.environ['wsgi.input'].rfile
 
         return wait_for_message(rfile)
-    finally:
-        polling -= 1
 
 @app.route('/<path:path>')
 def default(path):
