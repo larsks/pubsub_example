@@ -52,7 +52,7 @@ def pub():
         })
     return {'status': 'sent'}
 
-def worker(q, rfile):
+def worker(rfile):
     '''A worker is spawned for each long-poll client.  The worker blocks
     while waiting for a message to be received via subsock (a ZMQ sub
     socket) or for a client disconnect.'''
@@ -77,11 +77,10 @@ def worker(q, rfile):
 
         if subsock in events:
             msg = subsock.recv_json()
-            q.put(json.dumps(msg))
+            yield(json.dumps(msg))
             break
 
     subsock.close()
-    q.put(StopIteration)
 
 @app.route('/sub')
 def sub():
@@ -96,10 +95,8 @@ def sub():
     if using_openshift:
         bottle.response.headers['Access-Control-Allow-Origin'] = '*'
 
-    q = queue.Queue()
     rfile = bottle.request.environ['wsgi.input'].rfile
-    task = gevent.spawn(worker, q, rfile)
-    return q
+    return worker(rfile)
 
 @app.route('/<path:path>')
 def default(path):
